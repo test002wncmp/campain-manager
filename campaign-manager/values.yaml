@@ -1,0 +1,517 @@
+global:
+    volumnMountPath: "/usr/local/var/yaws/www/campaign_manager/tmp/"
+
+cm-admin:
+    replicaCount: 1
+
+    adminImage:
+      repository: gcr.io/campaignmgr/campaign_manager_admin_doc
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+    
+    service:
+        type: NodePort
+        port: 8002
+
+    envs:
+        - name: WEB_ROOT
+          value: "http://34.70.119.208:8002" 
+        - name: CAM_WEB_ROOT
+          value: "http://35.231.120.174:8002" 
+        - name: LOG_LEVEL
+          value: !!integer 1 
+        - name: HTTP_ROOT
+          value: "http://34.70.119.208:8002/campaign_manager/" 
+        - name: DB_CON_STRING
+          value: "DSN=campaign_mgr;UID=root;PWD=Wavenet123" 
+        - name: DB_CON_POOL_STRING
+          value: "DSN=campaign_mgr;UID=connPool;PWD=Connpool.321" 
+        - name: SYS_TPS
+          value: !!integer 3000 
+        - name: SYS_MMS_TPS
+          value: !!integer 40 
+        - name: POOL_SIZE
+          value: !!integer 200 
+        - name: ODBC_CON_TIME_OUT
+          value: !!integer 10000 
+        - name: TRANSACTION_POOLSIZE
+          value: !!integer 50 
+        - name: TPS_API_URL
+          value: "http://34.70.119.208:8099/" 
+        - name: SMPP_API_URL
+          value: "http://34.70.119.208:8002/" 
+        - name: REST_API_URL_ROOT
+          value: "http://35.231.120.174:8899/" 
+        - name: INERFACE_URL
+          value: "http://34.70.119.208:8099/cm_api/submit/*/submit_sm/" 
+        - name: CDR_SEARCH_URL
+          value: "http://34.70.119.208:8099/" 
+        - name: CRS_TABLE_DROP_TIMEOUT
+          value: !!integer 61 
+        - name: DETAILED_CMP_FILE_WRITE_API
+          value: "http://34.70.119.208:8099/cm_api/get/file_write" 
+        - name: CM_FILE_STORAGE_PATH
+          value: "/usr/local/var/yaws/www/campaign_manager/tmp/" 
+        - name: CRS_FILE_STORAGE_PATH
+          value: "/var/lib/mysql-files/" 
+        - name: CM_CHANNEL_TYPES
+          value: "1,2,3,4" 
+        - name: CM_CAMPAIGN_TYPES
+          value: "10,11" 
+        - name: CM_EXTERNAL_CONN_TYPES
+          value: "1,2" 
+        - name: CM_SMS_RETRY
+          value: !!integer 1 
+        - name: CM_MMS_RETRY
+          value: !!integer 1 
+        - name: CM_DAILY_MSG_LIMIT
+          value: !!integer 1 
+        - name: CM_DYNAMIC_TPS
+          value: !!integer 1 
+        - name: COMPOSE_API_URL
+          value: "http://10.0.0.99:4000/"
+        - name: WEBSOCKET_API_STATUS
+          value: !!integer 0 
+        - name: WEBSOCKET_URL
+          value: "http://34.70.119.208:3005/" 
+        - name: CM_SERVER_PORT
+          value: "10.0.0.64" 
+        - name: CM_APPROVAL_TIMEOUT_1
+          value: !!integer 60000 
+        - name: CM_APPROVAL_TIMEOUT_2
+          value: !!integer 10000 
+        - name: COMPOSE_AGENT_ID
+          value: "1" 
+        - name: CONTENT_MANAGER_BASE
+          value: "http://35.184.207.74/"
+        - name: AVERAGE_CALL_RINGGING_TIME
+          value: !!integer 2 
+        - name: MSISDN_REGEX_LIST
+          value: "[{.}]" 
+        - name: DNS
+          value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+        - name: CRS_DNS
+          value: "DSN=campaign_mgr_crs;UID=root;PWD=Omnibis.123" 
+        - name: ODBC_NORMAL_POOL_SIZE
+          value: !!integer 5 
+        - name: CRS_ODBC_NORMAL_POOL_SIZE
+          value: !!integer 5 
+        - name: ODBC_TRANSACTION_POOL_SIZE
+          value: !!integer 5 
+        - name: ODBC_NORMAL_SECOND_POOL_SIZE
+          value: !!integer 5 
+        - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+          value: !!integer 5 
+        - name: DB_SERVER_IP
+          value: "35.239.49.211" 
+        - name: DB_SERVER_UID
+          value: "root" 
+        - name: DB_SERVER_PW
+          value: "Omnibis.123" 
+        - name: DATABASE
+          value: "campaign_mgr"
+
+cm-http-requester:
+    replicaCount: 1
+
+    volumnImage:
+      repository: gcr.io/google_containers/volume-nfs
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "0.8"
+      
+    image:
+      repository: gcr.io/campaignmgr/campaign_http_requester_doc
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+    
+    service:
+        type: NodePort
+        port: 8099
+    
+    envs:
+        - name: LOG_NODE
+          value: "prime_log_21@true_smsbc_01" 
+        - name: RECEIVER_VERBOSITY
+          value: !!integer 7 
+        - name: RECEIVER_SERVER_COUNT
+          value: !!integer 10 
+        - name: DELIVERY_REPORT_PROCESSING_DELAY
+          value: !!integer 1000  
+        - name: RECEIVER_VOICE_RELEASE_REASON_MAP
+          value: "[]"  
+        - name: FILTER_LIST
+          value: "[cm_filter_service_blacklist, cm_filter_blacklist]" 
+        - name: FILTER_SERVER_COUNT
+          value: !!integer 10 
+        - name: FILTER_VERBOSITY
+          value: !!integer 7 
+        - name: DNS
+          value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+        - name: ODBC_NORMAL_POOL_SIZE
+          value: !!integer 5 
+        - name: ODBC_TRANSACTION_POOL_SIZE
+          value: !!integer 0 
+        - name: ODBC_NORMAL_SECOND_POOL_SIZE
+          value: !!integer 0 
+        - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+          value: !!integer 0 
+        - name: ODBC_VERBOSITY
+          value: !!integer 7 
+        - name: ODBC_CONN_TIMEOUT
+          value: !!integer 10000 
+        - name: CDR_SEARCH_TYPE
+          value: !!integer 0 
+        - name: HTTP_TIME_OFFSET
+          value: "+19800" 
+        - name: CDR_SEARCH_FILE_PATH
+          value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+        - name: ACTIVITY_LOG_PATH
+          value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+        - name: SYSTEM_SMS_TPS
+          value: !!integer 1000 
+        - name: SYSTEM_MMS_TPS
+          value: !!integer 40 
+        - name: SYSTEM_VOTING_TPS
+          value: !!integer 300 
+        - name: MINIMUM_ALLOWED_TPS
+          value: !!integer 0 
+        - name: HTTP_BUFFER_TIME
+          value: !!integer 10 
+        - name: HTTP_VERBOSITY
+          value: !!integer 7 
+        - name: HTTP_FILE_SAVE_PATH
+          value: "/var/lib/mysqlfiles/" 
+        - name: DEST_SMPP_ACC
+          value: "account1" 
+        - name: DEST_SMPP_ACC_HTTP
+          value: "account2" 
+        - name: MSISDN_VALIDATE_REGEX
+          value: "[]" 
+        - name: WEB_SOCKET_LIST
+          value: "[]" 
+        - name: WEB_SOCKET_IP
+          value: "10.0.0.87:3005" 
+        - name: REPORT_PATH
+          value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+        - name: CDR_REPORT_PATH
+          value: "/var/lib/mysql-files/" 
+        - name: REPORT_EXPIRY_PERIOD
+          value: !!integer 3600 
+        - name: DETAIL_CAMP_NEGLECT_ERROR_LIST
+          value: "102,114" 
+        - name: DETAIL_CAMP_REPORT_COLUMN_ORDER
+          value: "Blacklist,Duplicate Number,Character in the message is not support,Non TrueMoveH (not available in HLR),Handset memory exceeded,Phone is not respondin,Phone is switched off,Subscriber is busy,SMS service is not provisioning,Device is not support SMS,SMSC error,HLR Error/Blocked/Not completed,Other" 
+        - name: HTTP_LOGGING_IP
+          value: "10.0.0.64:8899" 
+        - name: HTTP_SERVER_IP
+          value: "10.0.0.64:8099" 
+        - name: API_PORT
+          value: !!integer 8099 
+        - name: DB_SERVER_IP
+          value: "35.239.49.211" 
+        - name: DB_SERVER_UID
+          value: "root" 
+        - name: DB_SERVER_PW
+          value: "Omnibis.123" 
+        - name: DATABASE
+          value: "campaign_mgr" 
+        - name: SMPP_HOST_IP1
+          value: "10.0.0.69" 
+        - name: SMPP_HOST_PORT1
+          value: !!integer 2781 
+        - name: SMPP_SYSTEM_ID1
+          value: "trueqaacc05" 
+        - name: SMPP_PASSWORD1
+          value: "test5" 
+        - name: SMPP_TROTTLE1
+          value: !!integer 50 
+        - name: SMPP_HOST_IP2
+          value: "10.0.0.69" 
+        - name: SMPP_HOST_PORT2
+          value: !!integer 2781 
+        - name: SMPP_SYSTEM_ID2
+          value: "trueqaacc06" 
+        - name: SMPP_PASSWORD2
+          value: "test6" 
+        - name: SMPP_TROTTLE2
+          value: !!integer 50 
+
+cm-file-uploader:
+    replicaCount: 1
+
+    image:
+      repository: gcr.io/campaignmgr/file_uploader_doc
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    envs:
+         # environmental variables
+        - name: FILE_UPLOADER_NODE
+          value: "file_uploader@cms0"
+        - name: FILE_UPLOADER_DISTRIBUTED_NODES
+          value: "file_uploader@cms1"
+        - name: FILE_UPLOADER_SYNC_MANDATORY_NODES
+          value: "file_uploader@cms1"		  
+        - name: FILE_UPLOAD_FREQUENCY
+          value: !!integer 3
+        - name: FILE_UPLOAD_SCHEDULE_DAY
+          value: !!integer 1
+        - name: FILE_UPLOAD_SCHEDULE_TIME
+          value: "{10,00,00"
+        - name: FILE_UPLOAD_REPORT_PATH
+          value: "/temp/files"
+        - name: AUTO_FILE_UPLOAD_REPORT_PATH
+          value: "/temp/reports/"
+        - name: FILE_UPLOAD_FULL_PATH
+          value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/"
+        - name: FILE_UPLOAD_EBANLE_AUTO_UPLOAD
+          value: !!integer 1
+        - name: FILE_UPLOAD_LENGTH
+          value: !!integer 500
+        - name: FILE_UPLOAD_REMOTE_PATH
+          value: "/tmp/backup/"
+        - name: FILE_UPLOAD_VERBOSITY
+          value: !!integer 7
+        - name: FILE_UPLOAD_USER
+          value: "super_admin@globalwavenet.com"
+        - name: FILE_UPLOAD_REGEX_LIST
+          value: "[{.}]"
+        - name: FILE_UPLOAD_MAX_LINE_COUNT
+          value: !!integer 15000000
+        - name: FILE_UPLOAD_ENTERPRISE_LOCATION
+          value: "/home/test/upload_files/enterprise/"
+        - name: FILE_UPLOAD_DEPARTMENT_LOCATION
+          value: "/home/test/upload_files/department/"
+        - name: FILE_UPLOAD_USER_LOCATION
+          value: "/home/test/upload_files/user/"
+        - name: FILE_UPLOAD_MAX_LIMIT_LOACTION
+          value: "/home/test/upload_files/msg_limit_upload/"
+        - name: FILE_UPLOAD_DND_LOCATION
+          value: "/home/test/upload_files/global_dnd_upload/"
+        - name: FILE_UPLOAD_MNP_LOCATION
+          value: "/home/test/upload_files/mnp_upload/"
+        - name: FILE_UPLOAD_WHITELIST_LOCATION
+          value: "/home/test/upload_files/whitelist_upload/"
+        - name: DNS
+          value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123"
+        - name: ODBC_NORMAL_POOL_SIZE
+          value: !!integer 5
+        - name: ODBC_TRANSACTION_POOL_SIZE
+          value: !!integer 0
+        - name: ODBC_NORMAL_SECOND_POOL_SIZE
+          value: !!integer 0
+        - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+          value: !!integer 0
+        - name: ODBC_VERBOSITY
+          value: !!integer 7
+        - name: ODBC_CONN_TIMEOUT
+          value: !!integer 10000
+        - name: DB_SERVER_IP
+          value: "34.75.81.191"
+        - name: DB_SERVER_UID
+          value: "root"
+        - name: DB_SERVER_PW
+          value: "Omnibis.123"
+        - name: DATABASE
+          value: "campaign_mgr"
+
+
+cm-scheduler:
+    replicaCount: 1
+
+    image:
+      repository: gcr.io/campaignmgr/campaign_scheduler_doc
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    envs:
+        - name: SCHEDULER_VERBOSITY
+          value: !!integer 3 
+        - name: SYSTEM_HARDWARE_TPS
+          value: !!integer 1000 
+        - name: SYSTEM_MMS_TPS
+          value: !!integer 40 
+        - name: SYSTEM_VOICE_PORTS
+          value: !!integer 100 
+        - name: OMNIESME_REST_API_URL
+          value: "http://10.0.0.88:8099/esme/submit_sm" 
+        - name: COMPOSE_API_ROOT
+          value: "10.0.0.99:4000" 
+        - name: COMPOSE_USERNAME
+          value: "super_admin@globalwavenet.com" 
+        - name: COMPOSE_PASSWORD
+          value: "Test@123" 
+        - name: COMPOSE_TOKEN_EXPIRY_TIME
+          value: !!integer 3600 
+        - name: AVERAGE_CALL_DURATION
+          value: !!integer 40 
+        - name: DNS
+          value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+        - name: ODBC_NORMAL_POOL_SIZE
+          value: !!integer 5
+        - name: ODBC_TRANSACTION_POOL_SIZE
+          value: !!integer 0
+        - name: ODBC_NORMAL_SECOND_POOL_SIZE
+          value: !!integer 0
+        - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+          value: !!integer 0 
+        - name: ODBC_VERBOSITY
+          value: !!integer 7 
+        - name: ODBC_CONN_TIMEOUT
+          value: !!integer 10000 
+        - name: DB_SERVER_IP
+          value: "35.239.49.211" 
+        - name: DB_SERVER_UID
+          value: "root" 
+        - name: DB_SERVER_PW
+          value: "Omnibis.123" 
+        - name: DATABASE
+          value: "campaign_mgr"
+
+cm-emitter:
+    replicaCount: 1
+
+    image:
+      repository: gcr.io/campaignmgr/campaign_emitter_doc
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    envs:
+       - name: DISTRIBUTED_NODES
+         value: "'campaign_scheduler@campaign-scheduler-0.headless-svc.default.svc.cluster.local'"
+       - name: SENDER_UPADTE_FREQUENCY
+         value: !!integer 5              
+       - name: SENDER_RECORD_LIMIT
+         value: !!integer 50 
+       - name: SENDER_UPDATE_RECORD_COUNT
+         value: !!integer 10 
+       - name: SENDER_VERBOSITY
+         value: !!integer 7 
+       - name: CAMPAIGN_ESME_LIST
+         value: "[esme_gsm]" 
+       - name: COMPOSE_API_ROOT
+         value: "10.0.0.99:4000" 
+       - name: IVR_BLOCK
+         value: "1" 
+       - name: RECEIVER_VERBOSITY
+         value: !!integer 7 
+       - name: RECEIVER_SERVER_COUNT
+         value: !!integer 10 
+       - name: DELIVERY_REPORPROCESSING_DELAY
+         value: !!integer 100 
+       - name: FILTER_LIST
+         value: "[cm_filter_service_blacklist, cm_filter_blacklist]" 
+       - name: FILTER_SERVER_COUNT
+         value: !!integer 10 
+       - name: FILTER_VERBOSITY
+         value: !!integer 7 
+       - name: MMS_INSTANCES
+         value: !!integer 10 
+       - name: APP_PORT
+         value: !!integer 8087 
+       - name: MM7_VERBOSITY
+         value: !!integer 7 
+       - name: MM7_VERSION
+         value: "6.4.0" 
+       - name: MM7_SCHEMA_VERSION
+         value: "true" 
+       - name: VASP_ID
+         value: "NEWS" 
+       - name: VAS_ID
+         value: "TNN" 
+       - name: MM7_SERVICE_CODE
+         value: "gold-sp33-im42" 
+       - name: MM7_DELIVERY_REPORT
+         value: "true" 
+       - name: MM7_LINKED_ID
+         value: "mms00016666" 
+       - name: MM7_MSG_CLASS
+         value: "Informational" 
+       - name: MM7_REPLY_CHARGING
+         value: undefined 
+       - name: MM7_READ_REPLY
+         value: "false" 
+       - name: MM7_PRIORITY
+         value: "Normal" 
+       - name: MM7_SUBJECT
+         value: "Subject" 
+       - name: MM7_CHARGED_PARTY
+         value: "Sender" 
+       - name: MM7_CHARGED_PARTY_ID
+         value: "undefined" 
+       - name: MM7_DISTRIBUTION_INDICATOR
+         value: "false" 
+       - name: MM7_DELIVERY_CONDITION
+         value: "undefined" 
+       - name: MM7_APP_ID
+         value: "undefined" 
+       - name: MM7_REPLY_APP_ID
+         value: "undefined" 
+       - name: MM7_AUX_INFO
+         value: "undefined" 
+       - name: MM7_CONTENT_CLASS
+         value: "Video-rich" 
+       - name: MM7_DRM_CONTENT
+         value: "false" 
+       - name: MM7_EARLIEST_DELIVERY
+         value: !!integer 1000 
+       - name: MM7_EXPIRY
+         value: !!integer 10000 
+       - name: MM7_CONTENT_PATH
+         value: "/usr/local/var/yaws/www/campaign_manager/tmp/mms_content/" 
+       - name: MM7_SOAP_URL
+         value: "http://10.0.0.69:8090" 
+       - name: MM7_ATTACHMENT
+         value: "true" 
+       - name: DNS
+         value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+       - name: ODBC_NORMAL_POOL_SIZE
+         value: !!integer 5 
+       - name: ODBC_TRANSACTION_POOL_SIZE
+         value: !!integer 0 
+       - name: ODBC_NORMAL_SECOND_POOL_SIZE
+         value: !!integer 0 
+       - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+         value: !!integer 0 
+       - name: ODBC_VERBOSITY
+         value: !!integer 7 
+       - name: ODBC_CONN_TIMEOUT
+         value: !!integer 10000 
+       - name: VOTING_ESME_LIST
+         value: "[esme_gsm1]" 
+       - name: LOG_NODE
+         value: "prime_log_21@true_smsbc_01" 
+       - name: DB_SERVER_IP
+         value: "34.75.81.191" 
+       - name: DB_SERVER_UID
+         value: "root" 
+       - name: DB_SERVER_PW
+         value: "Omnibis.123" 
+       - name: DATABASE
+         value: "campaign_mgr" 
+       - name: SMPP_HOST_IP1
+         value: "10.0.0.69" 
+       - name: SMPP_HOST_PORT1
+         value: !!integer 2781 
+       - name: SMPP_SYSTEM_ID1
+         value: "trueqaacc01" 
+       - name: SMPP_PASSWORD1
+         value: "test1" 
+       - name: SMPP_TROTTLE1
+         value: !!integer 50 
+       - name: SMPP_HOST_IP2
+         value: "10.0.0.69" 
+       - name: SMPP_HOST_PORT2
+         value: !!integer 2781 
+       - name: SMPP_SYSTEM_ID2
+         value: "trueqaacc02" 
+       - name: SMPP_PASSWORD2
+         value: "test2" 
+       - name: SMPP_TROTTLE2
+         value: !!integer 50 

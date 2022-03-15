@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: campaign-http-requester
+  labels:
+    app: campaign-http-requester
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: campaign-http-requester
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.port }}

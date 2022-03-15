@@ -1,0 +1,199 @@
+# Default values for front_end_helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+adminImage:
+  repository: gcr.io/campaignmgr/campaign_manager_admin_doc
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+terminationGracePeriod: 30
+
+envs:
+    - name: WEB_ROOT
+      value: "http://34.70.119.208:8002" 
+    - name: CAM_WEB_ROOT
+      value: "http://35.231.120.174:8002" 
+    - name: LOG_LEVEL
+      value: !!integer 1 
+    - name: HTTP_ROOT
+      value: "http://34.70.119.208:8002/campaign_manager/" 
+    - name: DB_CON_STRING
+      value: "DSN=campaign_mgr;UID=root;PWD=Wavenet123" 
+    - name: DB_CON_POOL_STRING
+      value: "DSN=campaign_mgr;UID=connPool;PWD=Connpool.321" 
+    - name: SYS_TPS
+      value: !!integer 3000 
+    - name: SYS_MMS_TPS
+      value: !!integer 40 
+    - name: POOL_SIZE
+      value: !!integer 200 
+    - name: ODBC_CON_TIME_OUT
+      value: !!integer 10000 
+    - name: TRANSACTION_POOLSIZE
+      value: !!integer 50 
+    - name: TPS_API_URL
+      value: "http://34.70.119.208:8099/" 
+    - name: SMPP_API_URL
+      value: "http://34.70.119.208:8002/" 
+    - name: REST_API_URL_ROOT
+      value: "http://35.231.120.174:8899/" 
+    - name: INERFACE_URL
+      value: "http://34.70.119.208:8099/cm_api/submit/*/submit_sm/" 
+    - name: CDR_SEARCH_URL
+      value: "http://34.70.119.208:8099/" 
+    - name: CRS_TABLE_DROP_TIMEOUT
+      value: !!integer 61 
+    - name: DETAILED_CMP_FILE_WRITE_API
+      value: "http://34.70.119.208:8099/cm_api/get/file_write" 
+    - name: CM_FILE_STORAGE_PATH
+      value: "/usr/local/var/yaws/www/campaign_manager/tmp/" 
+    - name: CRS_FILE_STORAGE_PATH
+      value: "/var/lib/mysql-files/" 
+    - name: CM_CHANNEL_TYPES
+      value: "1,2,3,4" 
+    - name: CM_CAMPAIGN_TYPES
+      value: "10,11" 
+    - name: CM_EXTERNAL_CONN_TYPES
+      value: "1,2" 
+    - name: CM_SMS_RETRY
+      value: !!integer 1 
+    - name: CM_MMS_RETRY
+      value: !!integer 1 
+    - name: CM_DAILY_MSG_LIMIT
+      value: !!integer 1 
+    - name: CM_DYNAMIC_TPS
+      value: !!integer 1 
+    - name: COMPOSE_API_URL
+      value: "http://10.0.0.99:4000/"
+    - name: WEBSOCKET_API_STATUS
+      value: !!integer 0 
+    - name: WEBSOCKET_URL
+      value: "http://34.70.119.208:3005/" 
+    - name: CM_SERVER_PORT
+      value: "10.0.0.64" 
+    - name: CM_APPROVAL_TIMEOUT_1
+      value: !!integer 60000 
+    - name: CM_APPROVAL_TIMEOUT_2
+      value: !!integer 10000 
+    - name: COMPOSE_AGENT_ID
+      value: "1" 
+    - name: CONTENT_MANAGER_BASE
+      value: "http://35.184.207.74/"
+    - name: AVERAGE_CALL_RINGGING_TIME
+      value: !!integer 2 
+    - name: MSISDN_REGEX_LIST
+      value: "[{\"^(668|08|8)([0-9]{8})$\",\"668\\2\"}]" 
+    - name: DNS
+      value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+    - name: CRS_DNS
+      value: "DSN=campaign_mgr_crs;UID=root;PWD=Omnibis.123" 
+    - name: ODBC_NORMAL_POOL_SIZE
+      value: !!integer 5 
+    - name: CRS_ODBC_NORMAL_POOL_SIZE
+      value: !!integer 5 
+    - name: ODBC_TRANSACTION_POOL_SIZE
+      value: !!integer 5 
+    - name: ODBC_NORMAL_SECOND_POOL_SIZE
+      value: !!integer 5 
+    - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+      value: !!integer 5 
+    - name: DB_SERVER_IP
+      value: "35.239.49.211" 
+    - name: DB_SERVER_UID
+      value: "root" 
+    - name: DB_SERVER_PW
+      value: "Omnibis.123" 
+    - name: DATABASE
+      value: "campaign_mgr"
+
+readiness:
+    InitialDelaySeconds: 300
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+liveness:
+    InitialDelaySeconds: 30
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+volumnMountPath: /opt/data
+
+imagePullSecrets:
+    - name: nexusjenkins
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8002
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

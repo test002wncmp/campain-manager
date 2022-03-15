@@ -1,0 +1,172 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: gcr.io/campaignmgr/file_uploader_doc
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+envs:
+     # environmental variables
+    - name: FILE_UPLOADER_NODE
+      value: "file_uploader@cms0"
+    - name: FILE_UPLOADER_DISTRIBUTED_NODES
+      value: "file_uploader@cms1"
+    - name: FILE_UPLOADER_SYNC_MANDATORY_NODES
+      value: "file_uploader@cms1"		  
+    - name: FILE_UPLOAD_FREQUENCY
+      value: !!integer 3
+    - name: FILE_UPLOAD_SCHEDULE_DAY
+      value: !!integer 1
+    - name: FILE_UPLOAD_SCHEDULE_TIME
+      value: "{10,00,00"
+    - name: FILE_UPLOAD_REPORT_PATH
+      value: "/temp/files"
+    - name: AUTO_FILE_UPLOAD_REPORT_PATH
+      value: "/temp/reports/"
+    - name: FILE_UPLOAD_FULL_PATH
+      value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/"
+    - name: FILE_UPLOAD_EBANLE_AUTO_UPLOAD
+      value: !!integer 1
+    - name: FILE_UPLOAD_LENGTH
+      value: !!integer 500
+    - name: FILE_UPLOAD_REMOTE_PATH
+      value: "/tmp/backup/"
+    - name: FILE_UPLOAD_VERBOSITY
+      value: !!integer 7
+    - name: FILE_UPLOAD_USER
+      value: "super_admin@globalwavenet.com"
+    - name: FILE_UPLOAD_REGEX_LIST
+      value: "[{\"^(668|08|8)([0-9]{8})$\", \"668\\\\2\"}]"
+    - name: FILE_UPLOAD_MAX_LINE_COUNT
+      value: !!integer 15000000
+    - name: FILE_UPLOAD_ENTERPRISE_LOCATION
+      value: "/home/test/upload_files/enterprise/"
+    - name: FILE_UPLOAD_DEPARTMENT_LOCATION
+      value: "/home/test/upload_files/department/"
+    - name: FILE_UPLOAD_USER_LOCATION
+      value: "/home/test/upload_files/user/"
+    - name: FILE_UPLOAD_MAX_LIMIT_LOACTION
+      value: "/home/test/upload_files/msg_limit_upload/"
+    - name: FILE_UPLOAD_DND_LOCATION
+      value: "/home/test/upload_files/global_dnd_upload/"
+    - name: FILE_UPLOAD_MNP_LOCATION
+      value: "/home/test/upload_files/mnp_upload/"
+    - name: FILE_UPLOAD_WHITELIST_LOCATION
+      value: "/home/test/upload_files/whitelist_upload/"
+    - name: DNS
+      value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123"
+    - name: ODBC_NORMAL_POOL_SIZE
+      value: !!integer 5
+    - name: ODBC_TRANSACTION_POOL_SIZE
+      value: !!integer 0
+    - name: ODBC_NORMAL_SECOND_POOL_SIZE
+      value: !!integer 0
+    - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+      value: !!integer 0
+    - name: ODBC_VERBOSITY
+      value: !!integer 7
+    - name: ODBC_CONN_TIMEOUT
+      value: !!integer 10000
+    - name: DB_SERVER_IP
+      value: "34.75.81.191"
+    - name: DB_SERVER_UID
+      value: "root"
+    - name: DB_SERVER_PW
+      value: "Omnibis.123"
+    - name: DATABASE
+      value: "campaign_mgr"
+
+terminationGracePeriod: 30
+
+readiness:
+    InitialDelaySeconds: 300
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+liveness:
+    InitialDelaySeconds: 30
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+volumnMountPath: /opt/data
+
+imagePullSecrets: 
+    - name: nexusjenkins
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8099
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

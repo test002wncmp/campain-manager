@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: campaign-emitter
+spec:
+  selector:
+    matchLabels:
+      app: campaign-emitter # has to match .spec.template.metadata.labels
+  serviceName: "headless-svc"    
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }} # by default is 1
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: campaign-emitter # has to match .spec.selector.matchLabels
+        statekey: headless
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriod }}
+       {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: campaign-emitter
+        image: {{ .Values.image.repository }}
+        env: 
+          {{- range .Values.envs }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- end }}
+          
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - /etc/init.d/scale_in.sh
+              - sleep 180
+        readinessProbe:
+            exec:
+                command:
+                - /bin/bash
+                - /etc/init.d/checkHealth.system
+                - readystatus
+                - cat
+                - /tmp/readyhealthy
+            initialDelaySeconds: {{ .Values.readiness.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.readiness.PeriodSeconds }}
+            successThreshold: {{ .Values.readiness.SuccessThreshold }}
+            failureThreshold: {{ .Values.readiness.FailureThreshold }}
+            timeoutSeconds: {{ .Values.readiness.TimeoutSeconds }}
+        livenessProbe:
+            exec:
+                command:
+                - /bin/bash
+                - /etc/init.d/checkHealth.system
+                - livestatus
+                - cat
+                - /tmp/livehealthy
+            initialDelaySeconds: {{ .Values.liveness.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.liveness.PeriodSeconds }}
+            successThreshold: {{ .Values.liveness.SuccessThreshold }}
+            failureThreshold: {{ .Values.liveness.FailureThreshold }}
+            timeoutSeconds: {{ .Values.liveness.TimeoutSeconds }}
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: {{ .Values.global.volumnMountPath }} 
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: nfs           

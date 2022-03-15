@@ -1,0 +1,226 @@
+replicaCount: 1
+
+volumnImage:
+  repository: gcr.io/google_containers/volume-nfs
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.8"
+  
+image:
+  repository: gcr.io/campaignmgr/campaign_http_requester_doc
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+envs:
+    - name: LOG_NODE
+      value: "prime_log_21@true_smsbc_01" 
+    - name: RECEIVER_VERBOSITY
+      value: !!integer 7 
+    - name: RECEIVER_SERVER_COUNT
+      value: !!integer 10 
+    - name: DELIVERY_REPORT_PROCESSING_DELAY
+      value: !!integer 1000  
+    - name: RECEIVER_VOICE_RELEASE_REASON_MAP
+      value: "[]"  
+    - name: FILTER_LIST
+      value: "[cm_filter_service_blacklist, cm_filter_blacklist]" 
+    - name: FILTER_SERVER_COUNT
+      value: !!integer 10 
+    - name: FILTER_VERBOSITY
+      value: !!integer 7 
+    - name: DNS
+      value: "DSN=campaign_mgr;UID=root;PWD=Omnibis.123" 
+    - name: ODBC_NORMAL_POOL_SIZE
+      value: !!integer 5 
+    - name: ODBC_TRANSACTION_POOL_SIZE
+      value: !!integer 0 
+    - name: ODBC_NORMAL_SECOND_POOL_SIZE
+      value: !!integer 0 
+    - name: ODBC_TRANSACTION_SECOND_POOL_SIZE
+      value: !!integer 0 
+    - name: ODBC_VERBOSITY
+      value: !!integer 7 
+    - name: ODBC_CONN_TIMEOUT
+      value: !!integer 10000 
+    - name: CDR_SEARCH_TYPE
+      value: !!integer 0 
+    - name: HTTP_TIME_OFFSET
+      value: "+19800" 
+    - name: CDR_SEARCH_FILE_PATH
+      value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+    - name: ACTIVITY_LOG_PATH
+      value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+    - name: SYSTEM_SMS_TPS
+      value: !!integer 1000 
+    - name: SYSTEM_MMS_TPS
+      value: !!integer 40 
+    - name: SYSTEM_VOTING_TPS
+      value: !!integer 300 
+    - name: MINIMUM_ALLOWED_TPS
+      value: !!integer 0 
+    - name: HTTP_BUFFER_TIME
+      value: !!integer 10 
+    - name: HTTP_VERBOSITY
+      value: !!integer 7 
+    - name: HTTP_FILE_SAVE_PATH
+      value: "/var/lib/mysqlfiles/" 
+    - name: DEST_SMPP_ACC
+      value: "account1" 
+    - name: DEST_SMPP_ACC_HTTP
+      value: "account2" 
+    - name: MSISDN_VALIDATE_REGEX
+      value: "[\"^(66)([0-9]{9})$\"]" 
+    - name: WEB_SOCKET_LIST
+      value: "[]" 
+    - name: WEB_SOCKET_IP
+      value: "10.0.0.87:3005" 
+    - name: REPORT_PATH
+      value: "/usr/local/var/yaws/www/campaign_manager/tmp/number_content/" 
+    - name: CDR_REPORT_PATH
+      value: "/var/lib/mysql-files/" 
+    - name: REPORT_EXPIRY_PERIOD
+      value: !!integer 3600 
+    - name: DETAIL_CAMP_NEGLECT_ERROR_LIST
+      value: "102,114" 
+    - name: DETAIL_CAMP_REPORT_COLUMN_ORDER
+      value: "Blacklist,Duplicate Number,Character in the message is not support,Non TrueMoveH (not available in HLR),Handset memory exceeded,Phone is not respondin,Phone is switched off,Subscriber is busy,SMS service is not provisioning,Device is not support SMS,SMSC error,HLR Error/Blocked/Not completed,Other" 
+    - name: HTTP_LOGGING_IP
+      value: "10.0.0.64:8899" 
+    - name: HTTP_SERVER_IP
+      value: "10.0.0.64:8099" 
+    - name: API_PORT
+      value: !!integer 8099 
+    - name: DB_SERVER_IP
+      value: "35.239.49.211" 
+    - name: DB_SERVER_UID
+      value: "root" 
+    - name: DB_SERVER_PW
+      value: "Omnibis.123" 
+    - name: DATABASE
+      value: "campaign_mgr" 
+    - name: SMPP_HOST_IP1
+      value: "10.0.0.69" 
+    - name: SMPP_HOST_PORT1
+      value: !!integer 2781 
+    - name: SMPP_SYSTEM_ID1
+      value: "trueqaacc05" 
+    - name: SMPP_PASSWORD1
+      value: "test5" 
+    - name: SMPP_TROTTLE1
+      value: !!integer 50 
+    - name: SMPP_HOST_IP2
+      value: "10.0.0.69" 
+    - name: SMPP_HOST_PORT2
+      value: !!integer 2781 
+    - name: SMPP_SYSTEM_ID2
+      value: "trueqaacc06" 
+    - name: SMPP_PASSWORD2
+      value: "test6" 
+    - name: SMPP_TROTTLE2
+      value: !!integer 50 
+
+terminationGracePeriod: 30
+
+readiness:
+    InitialDelaySeconds: 300
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+liveness:
+    InitialDelaySeconds: 30
+    PeriodSeconds: 30
+    SuccessThreshold: 1
+    FailureThreshold: 100
+    TimeoutSeconds: 30
+
+ports:
+    - name: nfs
+      containerPort: 2049
+    - name: mountd
+      containerPort: 20048
+    - name: rpcbind
+      containerPort: 111
+
+volumnMountPath: /opt/data
+volumes:
+    mountPath: /exports
+    volumnName: mypvc
+    pdName: cm-gce-nfs-disk
+    fsType: ext4
+
+pvStorage: 10Gi
+
+imagePullSecrets: 
+    - name: nexusjenkins
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8099
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

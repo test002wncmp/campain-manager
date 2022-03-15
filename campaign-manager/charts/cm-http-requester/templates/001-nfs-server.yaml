@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: "{{ .Values.volumnImage.repository }}:{{ .Values.volumnImage.tag }}"
+        ports:
+           {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+            {{- end }}  
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: {{ .Values.volumes.mountPath }}
+            name: {{ .Values.volumes.volumnName }}
+      volumes:
+        - name: {{ .Values.volumes.volumnName }}
+          gcePersistentDisk:
+            pdName: {{ .Values.volumes.pdName }}
+            fsType: {{ .Values.volumes.fsType }}

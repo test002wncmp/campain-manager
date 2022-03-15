@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cam-service
+  labels:
+    app: campaign-manager-admin
+spec:
+  type: LoadBalancer
+  selector:
+    app: campaign-manager-admin
+  ports:
+  - name: admin
+    protocol: TCP
+    port: 8002
+    targetPort: 8002
