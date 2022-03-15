@@ -255,7 +255,7 @@ cm-file-uploader:
         - name: FILE_UPLOADER_DISTRIBUTED_NODES
           value: "file_uploader@cms1"
         - name: FILE_UPLOADER_SYNC_MANDATORY_NODES
-          value: "file_uploader@cms1"		  
+          value: "file_uploader@cms1"
         - name: FILE_UPLOAD_FREQUENCY
           value: !!integer 3
         - name: FILE_UPLOAD_SCHEDULE_DAY
